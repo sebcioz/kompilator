@@ -25,8 +25,9 @@ class Float(Const):
         super(Float, self).__init__(float(value))
 
 class Program(Node):
-    def __init__(self, declarations):
+    def __init__(self, declarations, funDefs):
         self.declarations = declarations
+        self.funDefs = funDefs
 
 class Declarations(Node):
     def __init__(self, typedDeclarations):
@@ -42,6 +43,16 @@ class Declaration(Node):
         self.id = id
         self.value = value
 
+class FunDefs(Node):
+    def __init__(self, funDefs):
+        self.funDefs = funDefs
+
+class FunDef(Node):
+    def __init__(self, type, id):
+        self.type = type
+        self.id = id
+        #self.args = args
+        #self.instruction = instruction
 
 class String(Const):
     pass

@@ -14,6 +14,7 @@ class Parser(object):
         self.scanner = Scanner()
         self.scanner.build()
         self.declarations = []
+        self.funDefs = []
 
     tokens = Scanner.tokens
 
@@ -39,12 +40,10 @@ class Parser(object):
             print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
         else:
             print('At end of input')
-
-    
     
     def p_program(self, p):
-        """program : declarations"""
-        p[0] = AST.Program(p[1])
+        """program : declarations fundefs"""
+        p[0] = AST.Program(p[1], p[2])
     
     def p_declarations(self, p):
         """declarations : declarations declaration
@@ -202,10 +201,15 @@ class Parser(object):
         """fundefs : fundef fundefs
                    |  """
 
+        if len(p) > 1:
+            self.funDefs.append(p[1])
+
+        p[0] = AST.FunDefs(utils.flatten(self.funDefs))
+
     def p_fundef(self, p):
-        """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr """
-    
-    
+        """fundef : TYPE ID '(' ')'"""
+        p[0] = AST.FunDef(p[1], p[2])
+        
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
                               | """
@@ -216,6 +220,4 @@ class Parser(object):
     
     def p_arg(self, p):
         """arg : TYPE ID """
-
-
     

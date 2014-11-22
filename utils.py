@@ -6,4 +6,4 @@ def flatten(lst):
 
 
 def indent(count, string):
-    print "| "*count+repr(string)
+    print "| "*count+str(string)
