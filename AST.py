@@ -48,11 +48,15 @@ class FunDefs(Node):
         self.funDefs = funDefs
 
 class FunDef(Node):
+    def __init__(self, type, id, args):
+        self.type = type
+        self.id = id
+        self.args = args
+
+class Arg(Node):
     def __init__(self, type, id):
         self.type = type
         self.id = id
-        #self.args = args
-        #self.instruction = instruction
 
 class String(Const):
     pass

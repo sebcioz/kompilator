@@ -207,17 +207,28 @@ class Parser(object):
         p[0] = AST.FunDefs(utils.flatten(self.funDefs))
 
     def p_fundef(self, p):
-        """fundef : TYPE ID '(' ')'"""
-        p[0] = AST.FunDef(p[1], p[2])
+        """fundef : TYPE ID '(' args_list_or_empty ')'"""
+        p[0] = AST.FunDef(p[1], p[2], p[4])
         
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
                               | """
+
+        if len(p) > 1:
+            p[0] = utils.flatten(p[1])
+        else:
+            p[0] = []
     
     def p_args_list(self, p):
         """args_list : args_list ',' arg 
                      | arg """
+
+        if len(p) > 2:
+            p[0] = [p[1], p[3]]
+        else:
+            p[0] = [p[1]]
     
     def p_arg(self, p):
         """arg : TYPE ID """
     
+        p[0] = AST.Arg(p[1], p[2])

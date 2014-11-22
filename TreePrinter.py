@@ -49,6 +49,13 @@ class TreePrinter:
         indent(level + 1, self.id.value)
         indent(level + 1, "RET " + self.type.value)
 
+        for arg in self.args:
+            arg.printTree(level + 1)
+
+    @addToClass(AST.Arg)
+    def printTree(self, level):
+        indent(level, "ARG " + self.type.value + " " + self.id.value)
+
     @staticmethod
     def printAST(parsed):
         parsed.printTree(0)

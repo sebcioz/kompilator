@@ -3,6 +3,4 @@ int K=20, D=22;
 int Z=20;
 string T="sdafasdfasdf";
 
-int hello()
-string AAA()
-float OTHER_FUNCTION()
+int hello(int a, string b)
