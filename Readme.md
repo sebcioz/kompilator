@@ -25,12 +25,15 @@ DECL
 | | | T
 | | | "sdafasdfasdf"
 FUNDEF
-| OTHER_FUNCTION
-| RET float
-FUNDEF
-| AAA
-| RET string
-FUNDEF
 | hello
+| RET int
+| ARG int a
+| ARG string b
+FUNDEF
+| dsfjsdf
+| RET int
+| ARG int a
+FUNDEF
+| SUPER_TEST
 | RET int
 ````
