@@ -14,7 +14,6 @@ class Parser(object):
         self.scanner = Scanner()
         self.scanner.build()
         self.declarations = []
-        self.funDefs = []
 
     tokens = Scanner.tokens
 
@@ -43,7 +42,7 @@ class Parser(object):
     
     def p_program(self, p):
         """program : declarations fundefs"""
-        p[0] = AST.Program(p[1], p[2])
+        p[0] = AST.Program(p[1], utils.flatten(p[2]))
     
     def p_declarations(self, p):
         """declarations : declarations declaration
@@ -202,9 +201,9 @@ class Parser(object):
                    |  """
 
         if len(p) > 1:
-            self.funDefs.append(p[1])
-
-        p[0] = AST.FunDefs(utils.flatten(self.funDefs))
+            p[0] = [p[1], p[2]]
+        else:
+            p[0] = []
 
     def p_fundef(self, p):
         """fundef : TYPE ID '(' args_list_or_empty ')'"""

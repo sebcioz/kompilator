@@ -43,10 +43,6 @@ class Declaration(Node):
         self.id = id
         self.value = value
 
-class FunDefs(Node):
-    def __init__(self, funDefs):
-        self.funDefs = funDefs
-
 class FunDef(Node):
     def __init__(self, type, id, args):
         self.type = type

@@ -4,3 +4,5 @@ int Z=20;
 string T="sdafasdfasdf";
 
 int hello(int a, string b)
+int dsfjsdf(int a)
+int SUPER_TEST()
