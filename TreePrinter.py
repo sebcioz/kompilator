@@ -58,6 +58,23 @@ class TreePrinter:
     @addToClass(AST.CompoundInstructions)
     def printTree(self, level):
         self.declarations.printTree(level+1)
+        self.instructions.printTree(level)
+
+    @addToClass(AST.PrintInstruction)
+    def printTree(self, level):
+        indent(level, "PRINT")
+        self.expression.printTree(level+1)
+
+    @addToClass(AST.Instructions)
+    def printTree(self, level):
+        for instruction in self.instructions:
+            instruction.printTree(level+1)
+
+
+
+    @addToClass(AST.Const)
+    def printTree(self, level):
+        indent(level, self.value)
 
 
 

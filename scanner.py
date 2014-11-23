@@ -38,8 +38,8 @@ class Scanner(object):
   }
 
 
-  tokens = [ "AND", "EQ", "FLOAT", "GE", "ID", "INTEGER", "LE", "NEQ", "OR",
-             "SHL", "SHR", "STRING", "TYPE",  ] + list(reserved.values())
+  tokens = list(reserved.values())+ [ "AND", "EQ", "FLOAT", "GE", "ID", "INTEGER", "LE", "NEQ", "OR",
+             "SHL", "SHR", "STRING", "TYPE"]
            
 
   t_ignore = ' \t\f'
@@ -91,6 +91,7 @@ class Scanner(object):
   t_AND = r"&&"
   t_SHL = r"<<"
   t_SHR = r">>"
+  t_PRINT = r"print"
 
 
   def t_TYPE(self,t):

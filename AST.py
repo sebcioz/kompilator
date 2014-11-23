@@ -81,5 +81,18 @@ class ID(Const):
 
 
 class CompoundInstructions(Node):
-    def __init__(self, declarations):
+    def __init__(self, declarations, instructions):
         self.declarations = declarations
+        self.instructions = instructions
+
+class Instructions(Node):
+    def __init__(self, instructions):
+        self.instructions = instructions
+
+class Instruction(Node):
+    pass
+
+class PrintInstruction(Instruction):
+    def __init__(self, expression):
+        super(PrintInstruction, self).__init__()
+        self.expression = expression

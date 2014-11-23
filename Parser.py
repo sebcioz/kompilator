@@ -16,7 +16,6 @@ class Parser(object):
 
     tokens = Scanner.tokens
 
-
     precedence = (
        ("nonassoc", 'IFX'),
        ("nonassoc", 'ELSE'),
@@ -55,7 +54,7 @@ class Parser(object):
             p[0] = []
     
     def p_declaration(self, p):
-        """declaration : TYPE inits ';' 
+        """declaration : TYPE inits ';'
                        | error ';' """
         p[0] = AST.TypedDeclarations(p[1], utils.flatten(p[2]))
 
@@ -79,25 +78,22 @@ class Parser(object):
     def p_instructions(self, p):
         """instructions : instructions instruction
                         | instruction """
+        if len(p) > 2:
+            p[0] = [p[1], p[2]]
+        else:
+            p[0] = [p[1]]
     
     
     def p_instruction(self, p):
-        """instruction : print_instr
-                       | labeled_instr
-                       | assignment
-                       | choice_instr
-                       | while_instr 
-                       | repeat_instr 
-                       | return_instr
-                       | break_instr
-                       | continue_instr
-                       | compound_instr"""
+        """instruction : print_instr"""
+        p[0] = p[1]
     
     
     def p_print_instr(self, p):
         """print_instr : PRINT expression ';'
                        | PRINT error ';' """
-    
+        p[0] = AST.PrintInstruction(p[2])
+
     
     def p_labeled_instr(self, p):
         """labeled_instr : ID ':' instruction """
@@ -135,9 +131,9 @@ class Parser(object):
     
     
     def p_compound_instr(self, p):
-        """compound_instr : '{' declarations '}' """
+        """compound_instr : '{' declarations instructions '}' """
 
-        p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]))
+        p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]), AST.Instructions(utils.flatten(p[3])))
     
     def p_condition(self, p):
         """condition : expression"""
@@ -197,7 +193,7 @@ class Parser(object):
             p[0] = []
 
     def p_fundef(self, p):
-        """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr"""
+        """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr """
         p[0] = AST.FunDef(p[1], p[2], p[4], p[6])
         
     def p_args_list_or_empty(self, p):
