@@ -17,7 +17,6 @@ class TreePrinter:
 
     @addToClass(AST.Program)
     def printTree(self, level):
-        print "DECL"
         self.declarations.printTree(level)
 
         for funDef in self.funDefs:
@@ -25,6 +24,7 @@ class TreePrinter:
 
     @addToClass(AST.Declarations)
     def printTree(self, level):
+        indent(level, "DECL")
         for declaration in self.typedDeclarations:
             declaration.printTree(level+1)
 
@@ -49,9 +49,17 @@ class TreePrinter:
         for arg in self.args:
             arg.printTree(level + 1)
 
+        self.compoundInstructions.printTree(level)
+
     @addToClass(AST.Arg)
     def printTree(self, level):
         indent(level, "ARG " + self.type.value + " " + self.id.value)
+
+    @addToClass(AST.CompoundInstructions)
+    def printTree(self, level):
+        self.declarations.printTree(level+1)
+
+
 
     @staticmethod
     def printAST(parsed):

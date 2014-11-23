@@ -1,3 +1,5 @@
+import utils
+
 class Node(object):
     pass
     #def __repr__(self):
@@ -33,6 +35,19 @@ class Declarations(Node):
     def __init__(self, typedDeclarations):
         self.typedDeclarations = typedDeclarations
 
+    @staticmethod
+    def mapTypedDeclarations(typedDeclarations):
+        declarations = utils.flatten(typedDeclarations)
+        grouped = {}
+
+        for declaration in declarations:
+            if not grouped.has_key(declaration.type.value):
+                grouped[declaration.type.value] = TypedDeclarations(declaration.type, [])
+            grouped[declaration.type.value].declarations.extend(declaration.declarations)
+
+
+        return Declarations(grouped.values())
+
 class TypedDeclarations(Node):
     def __init__(self, type, declarations):
         self.type = type
@@ -44,10 +59,11 @@ class Declaration(Node):
         self.value = value
 
 class FunDef(Node):
-    def __init__(self, type, id, args):
+    def __init__(self, type, id, args, compoundInstructions):
         self.type = type
         self.id = id
         self.args = args
+        self.compoundInstructions = compoundInstructions
 
 class Arg(Node):
     def __init__(self, type, id):
@@ -63,3 +79,7 @@ class Type(Const):
 class ID(Const):
     pass
 
+
+class CompoundInstructions(Node):
+    def __init__(self, declarations):
+        self.declarations = declarations

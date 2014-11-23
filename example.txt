@@ -3,6 +3,13 @@ int K=20, D=22;
 int Z=20;
 string T="sdafasdfasdf";
 
-int hello(int a, string b)
-int dsfjsdf(int a)
-int SUPER_TEST()
+int hello(int a, string b){
+    int X=20;
+    float K="dsafasdf";
+}
+int dsfjsdf(int a){
+
+}
+int SUPER_TEST(){
+
+}

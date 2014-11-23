@@ -13,7 +13,6 @@ class Parser(object):
     def __init__(self):
         self.scanner = Scanner()
         self.scanner.build()
-        self.declarations = []
 
     tokens = Scanner.tokens
 
@@ -42,27 +41,18 @@ class Parser(object):
     
     def p_program(self, p):
         """program : declarations fundefs"""
-        p[0] = AST.Program(p[1], utils.flatten(p[2]))
+
+
+        p[0] = AST.Program(AST.Declarations.mapTypedDeclarations(p[1]), utils.flatten(p[2]))
     
     def p_declarations(self, p):
         """declarations : declarations declaration
                         | """
 
         if len(p) > 1:
-            type = p[2].type
-
-            typedDeclarations = filter(lambda x: x.type.value == type.value, self.declarations)
-
-            if len(typedDeclarations) == 0:
-                typedDeclarations = AST.TypedDeclarations(type, [])
-                self.declarations.append(typedDeclarations)
-            else:
-                typedDeclarations = typedDeclarations[0]
-
-            for declaration in p[2].declarations:
-                typedDeclarations.declarations.append(declaration)
-
-        p[0] = AST.Declarations(self.declarations)
+            p[0] = [p[1], p[2]]
+        else:
+            p[0] = []
     
     def p_declaration(self, p):
         """declaration : TYPE inits ';' 
@@ -145,8 +135,9 @@ class Parser(object):
     
     
     def p_compound_instr(self, p):
-        """compound_instr : '{' declarations instructions '}' """
+        """compound_instr : '{' declarations '}' """
 
+        p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]))
     
     def p_condition(self, p):
         """condition : expression"""
@@ -206,8 +197,8 @@ class Parser(object):
             p[0] = []
 
     def p_fundef(self, p):
-        """fundef : TYPE ID '(' args_list_or_empty ')'"""
-        p[0] = AST.FunDef(p[1], p[2], p[4])
+        """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr"""
+        p[0] = AST.FunDef(p[1], p[2], p[4], p[6])
         
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
@@ -229,5 +220,5 @@ class Parser(object):
     
     def p_arg(self, p):
         """arg : TYPE ID """
-    
+
         p[0] = AST.Arg(p[1], p[2])

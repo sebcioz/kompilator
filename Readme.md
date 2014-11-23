@@ -1,15 +1,5 @@
 ````
 DECL
-| float
-| | =
-| | | X
-| | | 5.0
-| | =
-| | | Y
-| | | 10
-| | =
-| | | Z
-| | | 10
 | int
 | | =
 | | | K
@@ -20,6 +10,16 @@ DECL
 | | =
 | | | Z
 | | | 20
+| float
+| | =
+| | | X
+| | | 5.0
+| | =
+| | | Y
+| | | 10
+| | =
+| | | Z
+| | | 10
 | string
 | | =
 | | | T
@@ -29,11 +29,22 @@ FUNDEF
 | RET int
 | ARG int a
 | ARG string b
+| DECL
+| | int
+| | | =
+| | | | X
+| | | | 20
+| | float
+| | | =
+| | | | K
+| | | | "dsafasdf"
 FUNDEF
 | dsfjsdf
 | RET int
 | ARG int a
+| DECL
 FUNDEF
 | SUPER_TEST
 | RET int
+| DECL
 ````
