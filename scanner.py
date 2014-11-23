@@ -38,8 +38,8 @@ class Scanner(object):
   }
 
 
-  tokens = list(reserved.values())+ [ "AND", "EQ", "FLOAT", "GE", "ID", "INTEGER", "LE", "NEQ", "OR",
-             "SHL", "SHR", "STRING", "TYPE"]
+  tokens = [ "AND", "EQ", "FLOAT", "GE", "ID", "INTEGER", "LE", "NEQ", "OR",
+             "SHL", "SHR", "STRING", "TYPE"] +list(reserved.values())
            
 
   t_ignore = ' \t\f'
@@ -91,14 +91,18 @@ class Scanner(object):
   t_AND = r"&&"
   t_SHL = r"<<"
   t_SHR = r">>"
-  t_PRINT = r"print"
+
 
 
   def t_TYPE(self,t):
       r"\b(int|float|string)\b"
       t.value = AST.Type(t.value)
       return t
-  
+
+  def t_PRINT(self,  t):
+      r"print"
+      return t
+
   def t_ID(self,t):
       r"[a-zA-Z_]\w*"
       t.value = AST.ID(t.value)

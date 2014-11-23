@@ -37,14 +37,22 @@ FUNDEF
 | | float
 | | | =
 | | | | K
-| | | | "dsafasdf"
+| | | | 234324.2323
+| PRINT
+| | "Cześć Adam"
 FUNDEF
 | dsfjsdf
 | RET int
 | ARG int a
 | DECL
+| PRINT
+| | K
+| PRINT
+| | 123.21
 FUNDEF
 | SUPER_TEST
 | RET int
 | DECL
+| PRINT
+| | K
 ````

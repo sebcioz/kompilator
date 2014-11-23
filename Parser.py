@@ -85,7 +85,16 @@ class Parser(object):
     
     
     def p_instruction(self, p):
-        """instruction : print_instr"""
+        """instruction : print_instr
+                       | labeled_instr
+                       | assignment
+                       | choice_instr
+                       | while_instr
+                       | repeat_instr
+                       | return_instr
+                       | break_instr
+                       | continue_instr
+                       | compound_instr"""
         p[0] = p[1]
     
     

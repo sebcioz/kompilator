@@ -1,3 +1,17 @@
-int hello(){
-    print 55;
+float X=5.0, Y=10, Z=10;
+int K=20, D=22;
+int Z=20;
+string T="sdafasdfasdf";
+
+int hello(int a, string b){
+    int X=20;
+    float K=234324.2323;
+    print "Cześć Adam";
+}
+int dsfjsdf(int a){
+    print K;
+    print 123.21;
+}
+int SUPER_TEST(){
+    print K;
 }
