@@ -27,9 +27,10 @@ class Float(Const):
         super(Float, self).__init__(float(value))
 
 class Program(Node):
-    def __init__(self, declarations, funDefs):
+    def __init__(self, declarations, funDefs, instructions):
         self.declarations = declarations
         self.funDefs = funDefs
+        self.instructions = instructions
 
 class Declarations(Node):
     def __init__(self, typedDeclarations):
@@ -96,3 +97,144 @@ class PrintInstruction(Instruction):
     def __init__(self, expression):
         super(PrintInstruction, self).__init__()
         self.expression = expression
+
+class WhileInstruction(Instruction):
+    def __init__(self, condition, instruction):
+        super(WhileInstruction, self).__init__()
+        self.condition = condition
+        self.instruction = instruction
+
+class LabeledInstruction(Instruction):
+    def __init__(self, id, instruction):
+        super(LabeledInstruction, self).__init__()
+        self.id = id
+        self.instruction = instruction
+
+class AssignmentInstruction(Instruction):
+    def __init__(self, id, expression):
+        super(AssignmentInstruction, self).__init__()
+        self.id = id
+        self.expression = expression
+
+class ChoiceInstruction(Instruction):
+    def __init__(self, condition, instruction):
+        super(ChoiceInstruction, self).__init__()
+        self.condition = condition
+        self.instruction = instruction
+
+
+class ChoiceElseInstruction(Instruction):
+    def __init__(self, condition, instruction, elseInstruction):
+        super(ChoiceElseInstruction, self).__init__()
+        self.condition = condition
+        self.instruction = instruction
+        self.elseInstruction = elseInstruction
+
+class RepeatInstruction(Instruction):
+    def __init__(self, instructions, condition):
+        super(RepeatInstruction, self).__init__()
+        self.instructions = instructions
+        self.condition = condition
+
+class Operator(Node):
+    def __init__(self, leftOperand, rightOperand):
+        super(Operator, self).__init__()
+        self.leftOperand = leftOperand
+        self.rightOperand = rightOperand
+    def sign(self):
+        pass
+
+class SumOperator(Operator):
+    def sign(self):
+        return "+"
+
+class MultiplyOperator(Operator):
+    def sign(self):
+        return "*"
+
+class DifferenceOperator(Operator):
+    def sign(self):
+        return "-"
+
+class DivOperator(Operator):
+    def sign(self):
+        return "/"
+
+class LogicalAndOperator(Operator):
+    def sign(self):
+        return "AND"
+
+class EqualOperator(Operator):
+    def sign(self):
+        return "=="
+
+
+class ModuloOperator(Operator):
+    def sign(self):
+        return "%"
+
+class BitXorOperator(Operator):
+    def sign(self):
+        return "^"
+
+class BitAndOperator(Operator):
+    def sign(self):
+        return "&"
+
+class BitOrOperator(Operator):
+    def sign(self):
+        return "|"
+
+class ShiftLeftOperator(Operator):
+    def sign(self):
+        return "<<"
+
+class ShiftRightOperator(Operator):
+    def sign(self):
+        return ">>"
+
+class LogicalOrOperator(Operator):
+    def sign(self):
+        return "||"
+
+class NotEqualOperator(Operator):
+    def sign(self):
+        return "!="
+
+class GreaterThanOperator(Operator):
+    def sign(self):
+        return ">"
+
+class GreaterEqualOperator(Operator):
+    def sign(self):
+        return ">="
+
+class LowerThanOperator(Operator):
+    def sign(self):
+        return "<"
+
+class LowerEqualOperator(Operator):
+    def sign(self):
+        return "<="
+
+class GroupingOperator(Node):
+    def __init__(self, operand):
+        super(GroupingOperator, self).__init__()
+        self.operand = operand
+
+class FunctionCallOperator(Node):
+    def __init__(self, id, arguments):
+        self.id = id
+        self.arguments = arguments
+
+
+class ReturnInstruction(Instruction):
+    def __init__(self, expression):
+        super(ReturnInstruction, self).__init__()
+        self.expression = expression
+
+class ContinueInstruction(Instruction):
+    pass
+
+class BreakInstruction(Instruction):
+    pass

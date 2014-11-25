@@ -103,7 +103,40 @@ class Scanner(object):
       r"print"
       return t
 
+  def t_WHILE(self, t):
+      r"while"
+      return t
+
+  def t_IF(self, t):
+      r"if"
+      return t
+
+  def t_ELSE(self, t):
+      r"else"
+      return t
+
+  def t_REPEAT(self, t):
+      r"repeat"
+      return t
+
+  def t_UNTIL(self, t):
+      r"until"
+      return t
+
+  def t_BREAK(self, t):
+      r"break"
+      return t
+
+  def t_CONTINUE(self, t):
+      r"continue"
+      return t
+
+  def t_RETURN(self, t):
+      r"return"
+      return t
+
   def t_ID(self,t):
       r"[a-zA-Z_]\w*"
       t.value = AST.ID(t.value)
       return t
+

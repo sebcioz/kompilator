@@ -1,17 +1,44 @@
-float X=5.0, Y=10, Z=10;
-int K=20, D=22;
-int Z=20;
-string T="sdafasdfasdf";
+
 
 int hello(int a, string b){
     int X=20;
     float K=234324.2323;
-    print "Cześć Adam";
+    print "Próba";
 }
-int dsfjsdf(int a){
-    print K;
-    print 123.21;
+int hello(int a){
+    return a * 10;
 }
 int SUPER_TEST(){
     print K;
+}
+
+print "Test";
+
+while(23) print "Test 123";
+
+labelka: print "Jestem nazwna";
+
+X = 212;
+
+if (K == 10 && 5==7){
+    while (10){
+        print 2 + 3 * 100 / 2 + 1;
+        K = 100;
+        break;
+    }
+}
+
+while(1){
+    print 1;
+    K = hello(2+2, "Sasas", (2*2)+2 == 2);
+    if( X >= 10){
+        continue;
+    }
+}
+
+
+if( ( x>0) && (2<<10) || (2 ^ 1) & 4 & 5 != 5){
+    K = 10;
+    X = hello(K);
+    print X;
 }

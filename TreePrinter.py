@@ -21,6 +21,9 @@ class TreePrinter:
 
         for funDef in self.funDefs:
             funDef.printTree(level)
+            
+        self.instructions.printTree(level)
+
 
     @addToClass(AST.Declarations)
     def printTree(self, level):
@@ -49,7 +52,7 @@ class TreePrinter:
         for arg in self.args:
             arg.printTree(level + 1)
 
-        self.compoundInstructions.printTree(level)
+        self.compoundInstructions.printTree(level+1)
 
     @addToClass(AST.Arg)
     def printTree(self, level):
@@ -57,7 +60,7 @@ class TreePrinter:
 
     @addToClass(AST.CompoundInstructions)
     def printTree(self, level):
-        self.declarations.printTree(level+1)
+        self.declarations.printTree(level)
         self.instructions.printTree(level)
 
     @addToClass(AST.PrintInstruction)
@@ -68,16 +71,84 @@ class TreePrinter:
     @addToClass(AST.Instructions)
     def printTree(self, level):
         for instruction in self.instructions:
-            instruction.printTree(level+1)
+            instruction.printTree(level)
+
+    @addToClass(AST.WhileInstruction)
+    def printTree(self, level):
+        indent(level, "WHILE")
+        self.condition.printTree(level+1)
+        self.instruction.printTree(level+1)
+
+    @addToClass(AST.LabeledInstruction)
+    def printTree(self, level):
+        indent(level, "LABELED")
+        self.id.printTree(level+1)
+        self.instruction.printTree(level+1)
+
+    @addToClass(AST.AssignmentInstruction)
+    def printTree(self, level):
+        indent(level, "=")
+        self.id.printTree(level+1)
+        self.expression.printTree(level+1)
 
 
+    @addToClass(AST.ChoiceInstruction)
+    def printTree(self, level):
+        indent(level, "IF")
+        self.condition.printTree(level+1)
+        self.instruction.printTree(level+1)
+
+    @addToClass(AST.ChoiceElseInstruction)
+    def printTree(self, level):
+        indent(level, "IF")
+        self.condition.printTree(level+1)
+        self.instruction.printTree(level+1)
+        indent(level, "ELSE")
+        self.elseInstruction.printTree(level+1)
+
+    @addToClass(AST.RepeatInstruction)
+    def printTree(self, level):
+        indent(level, "REPEAT")
+        self.instructions.printTree(level+1)
+        indent(level, "UNTIL")
+        self.condition.printTree(level+1)
+
+    @addToClass(AST.Operator)
+    def printTree(self, level):
+        indent(level, self.sign())
+        self.leftOperand.printTree(level+1)
+        self.rightOperand.printTree(level+1)
+
+    @addToClass(AST.GroupingOperator)
+    def printTree(self, level):
+        self.operand.printTree(level)
+
+    @addToClass(AST.FunctionCallOperator)
+    def printTree(self, level):
+        indent(level, "CALL")
+        self.id.printTree(level+1)
+        for argument in self.arguments:
+            argument.printTree(level+1)
+
+    @addToClass(AST.ReturnInstruction)
+    def printTree(self, level):
+        indent(level, "RETURN")
+        self.expression.printTree(level+1)
+
+    @addToClass(AST.ContinueInstruction)
+    def printTree(self, level):
+        indent(level, "CONTINUE")
+
+    @addToClass(AST.BreakInstruction)
+    def printTree(self, level):
+        indent(level, "BREAK")
+
+    @staticmethod
+    def printAST(parsed):
+        parsed.printTree(0)
 
     @addToClass(AST.Const)
     def printTree(self, level):
         indent(level, self.value)
 
 
-
-    @staticmethod
-    def printAST(parsed):
-        parsed.printTree(0)
