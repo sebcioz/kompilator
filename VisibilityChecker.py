@@ -48,3 +48,11 @@ class VisibilityChecker(NodeVisitor):
 
         for arg in node.arguments:
             self.visit(arg)
+
+    def visit_AssignmentInstruction(self, node):
+        try:
+            return node.scope[node.id.value]
+        except KeyError:
+            self.errors.append( ErrorMsg( "{0} not declared in this scope".format( node.id.value ), node.line, node.column ) )
+
+        self.visit(node.expression)

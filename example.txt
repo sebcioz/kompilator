@@ -1,4 +1,4 @@
-
+int K = 10;
 
 int hello(int a, string b){
     int X=20;
@@ -37,7 +37,7 @@ while(1){
 }
 
 
-if( ( x>0) && (2<<10) || (2 ^ 1) & 4 & 5 != 5){
+if( ( X>0) && (2<<10) || (2 ^ 1) & 4 & 5 != 5){
     K = 10;
     X = hello(K);
     print X;
