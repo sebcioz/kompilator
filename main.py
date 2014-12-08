@@ -2,7 +2,8 @@ import sys
 import ply.yacc as yacc
 import TreePrinter as tr
 from Parser import Parser
-
+from VisibilityChecker import VisibilityChecker
+from TypeChecker import TypeChecker
 
 if __name__ == '__main__':
 
@@ -20,3 +21,26 @@ if __name__ == '__main__':
     parsed =  parser.parse(text, lexer=Parser.scanner)
 
     tr.TreePrinter.printAST(parsed)
+
+    if parsed is not None:
+        print "Compiling {}".format( filename )
+        print
+
+        ch = VisibilityChecker()
+        ch.visit(parsed)
+
+        typeChecker = TypeChecker()
+        typeChecker.visit(parsed)
+
+        errors = sorted( ch.errors + typeChecker.errors, key = lambda el: el.line )
+        warnings = sorted( ch.warnings + typeChecker.warnings, key = lambda el: el.line )
+        msg = "successful" if len(errors) == 0 else "failed"
+
+        for error in errors:
+            print error
+        for warning in warnings:
+            print warning
+
+        print
+        print "Compilation {} ({} errors, {} warnings)".format( msg, len(errors), len(warnings) )
+

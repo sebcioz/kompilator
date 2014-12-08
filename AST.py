@@ -1,10 +1,30 @@
 import utils
+from scope import SymbolScope
 
 class Node(object):
-    pass
-    #def __repr__(self):
+    def __init__(self):
+        self.scope = None
+        self.children = []
+        self.parent = None
+        self.line = None
+        self.column = None
 
-        #raise Exception("__repr__ not defined in class " + self.__class__.__name__)
+    def set_parents(self):
+        for child in self.children:
+            child.parent = self
+            child.set_parents()
+
+    def set_scope(self, scope):
+        self.scope = scope
+        for child in self.children:
+            child.set_scope( scope )
+
+    def accept(self, visitor):
+        return visitor.visit(self)
+
+    def set_position(self, line, column):
+        self.line = line
+        self.column = column
 
 
 class Const(Node):
@@ -22,19 +42,29 @@ class Integer(Const):
 
 
 class Float(Const):
-
     def __init__(self, value):
         super(Float, self).__init__(float(value))
 
 class Program(Node):
     def __init__(self, declarations, funDefs, instructions):
+        super(Program, self).__init__()
         self.declarations = declarations
         self.funDefs = funDefs
         self.instructions = instructions
 
+        self.children = [declarations] + funDefs + [instructions]
+
+    def set_scope(self, scope = None):
+        self.scope = SymbolScope()
+        self.scope.parent = scope
+        for child in self.children:
+            child.set_scope( self.scope )
+
 class Declarations(Node):
     def __init__(self, typedDeclarations):
+        super(Declarations, self).__init__()
         self.typedDeclarations = typedDeclarations
+        self.children = typedDeclarations
 
     @staticmethod
     def mapTypedDeclarations(typedDeclarations):
@@ -51,25 +81,42 @@ class Declarations(Node):
 
 class TypedDeclarations(Node):
     def __init__(self, type, declarations):
+        super(TypedDeclarations, self).__init__()
         self.type = type
         self.declarations = declarations
+        self.children = declarations
 
 class Declaration(Node):
     def __init__(self, id, value):
+        super(Declaration, self).__init__()
         self.id = id
         self.value = value
 
+        self.children = [value]
+
 class FunDef(Node):
     def __init__(self, type, id, args, compoundInstructions):
+        super(FunDef, self).__init__()
         self.type = type
         self.id = id
         self.args = args
         self.compoundInstructions = compoundInstructions
 
+        self.children = [compoundInstructions]
+
+    def set_scope(self, scope):
+        self.scope = SymbolScope()
+        self.scope.parent = scope
+        for child in self.children:
+            child.set_scope( scope, preset_scope = self.scope )
+
 class Arg(Node):
     def __init__(self, type, id):
+        super(Arg, self).__init__()
         self.type = type
         self.id = id
+
+
 
 class String(Const):
     pass
@@ -83,12 +130,26 @@ class ID(Const):
 
 class CompoundInstructions(Node):
     def __init__(self, declarations, instructions):
+        super(CompoundInstructions, self).__init__()
         self.declarations = declarations
         self.instructions = instructions
+        self.children = [declarations, instructions]
+
+    def set_scope(self, scope, preset_scope = None):
+        if preset_scope is None:
+            self.scope = SymbolScope()
+        else:
+            self.scope = preset_scope
+
+        self.scope.parent = scope
+        for child in self.children:
+            child.set_scope( self.scope )
 
 class Instructions(Node):
     def __init__(self, instructions):
+        super(Instructions, self).__init__()
         self.instructions = instructions
+        self.children = instructions
 
 class Instruction(Node):
     pass
@@ -97,18 +158,21 @@ class PrintInstruction(Instruction):
     def __init__(self, expression):
         super(PrintInstruction, self).__init__()
         self.expression = expression
+        self.children = [expression]
 
 class WhileInstruction(Instruction):
     def __init__(self, condition, instruction):
         super(WhileInstruction, self).__init__()
         self.condition = condition
         self.instruction = instruction
+        self.children = [condition, instruction]
 
 class LabeledInstruction(Instruction):
     def __init__(self, id, instruction):
         super(LabeledInstruction, self).__init__()
         self.id = id
         self.instruction = instruction
+        self.children = [instruction]
 
 class AssignmentInstruction(Instruction):
     def __init__(self, id, expression):
@@ -116,11 +180,15 @@ class AssignmentInstruction(Instruction):
         self.id = id
         self.expression = expression
 
+        self.children = [expression]
+
 class ChoiceInstruction(Instruction):
     def __init__(self, condition, instruction):
         super(ChoiceInstruction, self).__init__()
         self.condition = condition
         self.instruction = instruction
+
+        self.children = [condition, instruction]
 
 
 class ChoiceElseInstruction(Instruction):
@@ -130,17 +198,24 @@ class ChoiceElseInstruction(Instruction):
         self.instruction = instruction
         self.elseInstruction = elseInstruction
 
+        self.children = [condition, instruction, elseInstruction]
+
 class RepeatInstruction(Instruction):
     def __init__(self, instructions, condition):
         super(RepeatInstruction, self).__init__()
         self.instructions = instructions
         self.condition = condition
 
+        self.children = instructions + [condition]
+
 class Operator(Node):
     def __init__(self, leftOperand, rightOperand):
         super(Operator, self).__init__()
         self.leftOperand = leftOperand
         self.rightOperand = rightOperand
+
+        self.children = [leftOperand, rightOperand]
+
     def sign(self):
         pass
 
@@ -221,17 +296,20 @@ class GroupingOperator(Node):
     def __init__(self, operand):
         super(GroupingOperator, self).__init__()
         self.operand = operand
+        self.children = [operand]
 
 class FunctionCallOperator(Node):
     def __init__(self, id, arguments):
+        super(FunctionCallOperator, self).__init__()
         self.id = id
         self.arguments = arguments
-
+        self.children = arguments
 
 class ReturnInstruction(Instruction):
     def __init__(self, expression):
         super(ReturnInstruction, self).__init__()
         self.expression = expression
+        self.children = [expression]
 
 class ContinueInstruction(Instruction):
     pass

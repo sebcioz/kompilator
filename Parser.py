@@ -40,24 +40,24 @@ class Parser(object):
     
     def p_program(self, p):
         """program : declarations fundefs instructions"""
-
-
         p[0] = AST.Program(AST.Declarations.mapTypedDeclarations(p[1]), utils.flatten(p[2]), AST.Instructions(utils.flatten(p[3])))
-    
+        p[0].set_parents()
+        p[0].set_scope()
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_declarations(self, p):
         """declarations : declarations declaration
                         | """
-
         if len(p) > 1:
             p[0] = [p[1], p[2]]
         else:
             p[0] = []
-    
+
     def p_declaration(self, p):
         """declaration : TYPE inits ';'
                        | error ';' """
         p[0] = AST.TypedDeclarations(p[1], utils.flatten(p[2]))
-
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
     def p_inits(self, p):
         """inits : inits ',' init
@@ -73,8 +73,9 @@ class Parser(object):
     def p_init(self, p):
         """init : ID '=' expression """
         p[0] =  AST.Declaration(p[1], p[3])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
-    
+
     def p_instructions(self, p):
         """instructions : instructions instruction
                         | instruction """
@@ -82,8 +83,8 @@ class Parser(object):
             p[0] = [p[1], p[2]]
         else:
             p[0] = [p[1]]
-    
-    
+
+
     def p_instruction(self, p):
         """instruction : print_instr
                        | labeled_instr
@@ -96,22 +97,25 @@ class Parser(object):
                        | continue_instr
                        | compound_instr"""
         p[0] = p[1]
-    
-    
+
+
     def p_print_instr(self, p):
         """print_instr : PRINT expression ';'
                        | PRINT error ';' """
         p[0] = AST.PrintInstruction(p[2])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
-    
+
     def p_labeled_instr(self, p):
         """labeled_instr : ID ':' instruction """
         p[0] = AST.LabeledInstruction(p[1], p[3])
-    
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_assignment(self, p):
         """assignment : ID '=' expression ';' """
         p[0] = AST.AssignmentInstruction(p[1], p[3])
-    
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_choice_instr(self, p):
         """choice_instr : IF '(' condition ')' instruction %prec IFX
                         | IF '(' condition ')' instruction ELSE instruction
@@ -121,38 +125,44 @@ class Parser(object):
             p[0] = AST.ChoiceElseInstruction(p[3], p[5], p[7])
         else:
             p[0] = AST.ChoiceInstruction(p[3], p[5])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
 
 
-    
+
     def p_while_instr(self, p):
         """while_instr : WHILE '(' condition ')' instruction
                        | WHILE '(' error ')' instruction """
         p[0] = AST.WhileInstruction(p[3], p[5])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
 
     def p_repeat_instr(self, p):
         """repeat_instr : REPEAT instructions UNTIL condition ';' """
         p[0] = AST.RepeatInstruction(AST.Instructions(p[2]), p[4])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
     def p_return_instr(self, p):
         """return_instr : RETURN expression ';' """
         p[0] = AST.ReturnInstruction(p[2])
-    
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_continue_instr(self, p):
         """continue_instr : CONTINUE ';' """
         p[0] = AST.ContinueInstruction()
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
     def p_break_instr(self, p):
         """break_instr : BREAK ';' """
         p[0] = AST.BreakInstruction()
-    
-    
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
+
     def p_compound_instr(self, p):
         """compound_instr : '{' declarations instructions '}' """
-
         p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]), AST.Instructions(utils.flatten(p[3])))
-    
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_condition(self, p):
         """condition : expression"""
         p[0] = p[1]
@@ -162,8 +172,8 @@ class Parser(object):
                  | FLOAT
                  | STRING"""
         p[0] = p[1]
-    
-    
+
+
     def p_expression(self, p):
         """expression : const
                       | ID
@@ -196,10 +206,12 @@ class Parser(object):
 
         if p[1] == '(':
             p[0] = AST.GroupingOperator(p[2])
+            p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
             return
 
         if p[2] == '(':
             p[0] = AST.FunctionCallOperator(p[1], p[3])
+            p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
             return
 
         if p[2] == "+":
@@ -244,9 +256,9 @@ class Parser(object):
         if p[2] == "<=":
             p[0] = AST.LowerEqualOperator(p[1], p[3])
 
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
-    
-    
+
     def p_expr_list_or_empty(self, p):
         """expr_list_or_empty : expr_list
                               | """
@@ -255,7 +267,7 @@ class Parser(object):
         else:
             p[0] = []
 
-    
+
     def p_expr_list(self, p):
         """expr_list : expr_list ',' expression
                      | expression """
@@ -263,8 +275,8 @@ class Parser(object):
             p[0] = [p[1], p[3]]
         else:
             p[0] = [p[1]]
-    
-    
+
+
     def p_fundefs(self, p):
         """fundefs : fundef fundefs
                    |  """
@@ -277,7 +289,8 @@ class Parser(object):
     def p_fundef(self, p):
         """fundef : TYPE ID '(' args_list_or_empty ')' compound_instr """
         p[0] = AST.FunDef(p[1], p[2], p[4], p[6])
-        
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
+
     def p_args_list_or_empty(self, p):
         """args_list_or_empty : args_list
                               | """
@@ -286,17 +299,18 @@ class Parser(object):
             p[0] = utils.flatten(p[1])
         else:
             p[0] = []
-    
+
     def p_args_list(self, p):
-        """args_list : args_list ',' arg 
+        """args_list : args_list ',' arg
                      | arg """
 
         if len(p) > 2:
             p[0] = [p[1], p[3]]
         else:
             p[0] = [p[1]]
-    
+
     def p_arg(self, p):
         """arg : TYPE ID """
 
         p[0] = AST.Arg(p[1], p[2])
+        p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
