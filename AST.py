@@ -120,6 +120,7 @@ class Arg(Node):
         super(Arg, self).__init__()
         self.type = type
         self.id = id
+        self.id.type = type
 
 
 
@@ -216,7 +217,7 @@ class RepeatInstruction(Instruction):
         self.instructions = instructions
         self.condition = condition
 
-        self.children = instructions + [condition]
+        self.children = [instructions] + [condition]
 
 class Operator(Node):
     def __init__(self, leftOperand, rightOperand):

@@ -93,6 +93,7 @@ class TypeChecker(NodeVisitor):
             expected_type = expected_arg.type.value
             given_type = self.visit( given_arg )
 
+
             self.arg_reaction[ expected_type ][ given_type ]( node.id, expected_arg.id.value, expected_type, given_type, node.line )
 
         return self.visit(node.id)
@@ -113,6 +114,7 @@ class TypeChecker(NodeVisitor):
             self.errors.append( ErrorMsg( "Invalid return type {0}. Expected {1}".format( got_type, expected_type ), node.line ) )
 
     def visit_ID(self, node):
+        print node.scope
         keys = node.scope.keys()
         originKeys = filter(lambda key: key == node, keys)
 

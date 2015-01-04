@@ -4,6 +4,7 @@ import TreePrinter as tr
 from Parser import Parser
 from VisibilityChecker import VisibilityChecker
 from TypeChecker import TypeChecker
+from Interpreter import Interpreter
 
 if __name__ == '__main__':
 
@@ -44,3 +45,9 @@ if __name__ == '__main__':
         print
         print "Compilation {} ({} errors, {} warnings)".format( msg, len(errors), len(warnings) )
 
+        if len(errors) == 0:
+            print
+            print "Output below in stdout"
+            print  "-" * 32
+
+            parsed.accept( Interpreter() )

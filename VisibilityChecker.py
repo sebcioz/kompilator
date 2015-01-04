@@ -32,7 +32,7 @@ class VisibilityChecker(NodeVisitor):
         # fill its own scope with arg list (this scope is shared with body compound instruction)
         for arg in node.args:
             try:
-                node.scope[ arg.id.value ] = arg.type.value
+                node.scope[ arg.id ] = arg.type.value
             except scope.MultipleDeclarationError:
                 self.errors.append( ErrorMsg( "Multiple declaration of parameter {0} in function {1}".format( arg.id.value, node.id.value ), node.line, node.column ) )
 
