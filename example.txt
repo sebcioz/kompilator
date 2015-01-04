@@ -1,37 +1,8 @@
-int X = 100;
-int Z = 2;
-
-
-string hello(int a, int b){
-    int Y = 10;
-    while(Y > 0){
-        if(Y == 3){
-            Y = Y -1;
-            continue;
-        }
-        print Y;
-        if(Y == 5){
-            break;
-        }
-
-        Y = Y -1;
+int power(int n){
+    if(n == 0){
+        return 1;
     }
-
-    return "Siema siema";
+    return n * power(n-1);
 }
 
-
-int test(int k){
-    string x = "";
-    repeat {
-        print k;
-        k = k - 1;
-        x = hello(k, 1);
-
-    } until (k > 0);
-
-}
-
-
-print hello(X + 1, 2*Z);
-print test(20);
+print power(20);

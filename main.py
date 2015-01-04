@@ -19,12 +19,12 @@ if __name__ == '__main__':
     parser = yacc.yacc(module=Parser)
     text = file.read()
 
-    parsed =  parser.parse(text, lexer=Parser.scanner)
+    parsed = parser.parse(text, lexer=Parser.scanner)
 
     tr.TreePrinter.printAST(parsed)
 
     if parsed is not None:
-        print "Compiling {}".format( filename )
+        print "Compiling {}".format(filename)
         print
 
         ch = VisibilityChecker()
@@ -33,8 +33,8 @@ if __name__ == '__main__':
         typeChecker = TypeChecker()
         typeChecker.visit(parsed)
 
-        errors = sorted( ch.errors + typeChecker.errors, key = lambda el: el.line )
-        warnings = sorted( ch.warnings + typeChecker.warnings, key = lambda el: el.line )
+        errors = sorted(ch.errors + typeChecker.errors, key=lambda el: el.line)
+        warnings = sorted(ch.warnings + typeChecker.warnings, key=lambda el: el.line)
         msg = "successful" if len(errors) == 0 else "failed"
 
         for error in errors:
@@ -43,11 +43,11 @@ if __name__ == '__main__':
             print warning
 
         print
-        print "Compilation {} ({} errors, {} warnings)".format( msg, len(errors), len(warnings) )
+        print "Compilation {} ({} errors, {} warnings)".format(msg, len(errors), len(warnings))
 
         if len(errors) == 0:
             print
             print "Output below in stdout"
             print  "-" * 32
 
-            parsed.accept( Interpreter() )
+            parsed.accept(Interpreter())

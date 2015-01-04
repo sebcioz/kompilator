@@ -5,57 +5,62 @@ import inspect
 
 __all__ = ['on', 'when']
 
+
 def on(param_name):
-  def f(fn):
-    dispatcher = Dispatcher(param_name, fn)
-    return dispatcher
-  return f
+    def f(fn):
+        dispatcher = Dispatcher(param_name, fn)
+        return dispatcher
+
+    return f
 
 
 def when(param_type):
-  # f - actual decorator
-  # fn - decorated method, i.e. visit
-  # ff - fn gets replaced by ff in the effect of applying @when decorator
-  # dispatcher is an function object
-  def f(fn):
-    frame = inspect.currentframe().f_back
-    dispatcher = frame.f_locals[fn.func_name]
-    if not isinstance(dispatcher, Dispatcher):
-      dispatcher = dispatcher.dispatcher
-    dispatcher.add_target(param_type, fn)
-    def ff(*args, **kw):
-      return dispatcher(*args, **kw)
-    ff.dispatcher = dispatcher
-    return ff
-  return f
+    # f - actual decorator
+    # fn - decorated method, i.e. visit
+    # ff - fn gets replaced by ff in the effect of applying @when decorator
+    # dispatcher is an function object
+    def f(fn):
+        frame = inspect.currentframe().f_back
+        dispatcher = frame.f_locals[fn.func_name]
+        if not isinstance(dispatcher, Dispatcher):
+            dispatcher = dispatcher.dispatcher
+        dispatcher.add_target(param_type, fn)
+
+        def ff(*args, **kw):
+            return dispatcher(*args, **kw)
+
+        ff.dispatcher = dispatcher
+        return ff
+
+    return f
 
 
 class Dispatcher(object):
-  def __init__(self, param_name, fn):
-    frame = inspect.currentframe().f_back.f_back   # these 2 lines
-    top_level = frame.f_locals == frame.f_globals  # seem redundant
-    self.param_index = inspect.getargspec(fn).args.index(param_name)
-    self.param_name = param_name
-    self.targets = {}
+    def __init__(self, param_name, fn):
+        frame = inspect.currentframe().f_back.f_back  # these 2 lines
+        top_level = frame.f_locals == frame.f_globals  # seem redundant
+        self.param_index = inspect.getargspec(fn).args.index(param_name)
+        self.param_name = param_name
+        self.targets = {}
 
-  def __call__(self, *args, **kw):
-    typ = args[self.param_index].__class__
-    parent_type =  args[self.param_index].__class__.__bases__[0]
+    def __call__(self, *args, **kw):
+        typ = args[self.param_index].__class__
+        parent_type = args[self.param_index].__class__.__bases__[0]
 
-    d = self.targets.get(typ)
-    d_parent = self.targets.get(parent_type)
+        d = self.targets.get(typ)
+        d_parent = self.targets.get(parent_type)
 
-    if d is not None:
-      return d(*args, **kw)
+        if d is not None:
+            return d(*args, **kw)
 
-    elif d_parent is not None:
-        return d_parent(*args, **kw)
-    else:
-      issub = issubclass
-      t = self.targets
-      ks = t.iterkeys()
+        elif d_parent is not None:
+            return d_parent(*args, **kw)
+        else:
+            issub = issubclass
+            t = self.targets
+            ks = t.iterkeys()
 
-      return [ t[k](*args, **kw) for k in ks if issub(typ, k) ]
+            return [t[k](*args, **kw) for k in ks if issub(typ, k)]
 
-  def add_target(self, typ, target):
-    self.targets[typ] = target
+    def add_target(self, typ, target):
+        self.targets[typ] = target

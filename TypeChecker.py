@@ -77,24 +77,25 @@ class TypeChecker(NodeVisitor):
         funDef = node.scope[node.id]
         funName = node.id
 
-        if not isinstance( funDef, AST.FunDef ):
-            self.errors.append( ErrorMsg( "Identifier {0} does not name a function".format( funName ), node.line ) )
+        if not isinstance(funDef, AST.FunDef):
+            self.errors.append(ErrorMsg("Identifier {0} does not name a function".format(funName), node.line))
             return None
 
-        for expected_arg, given_arg in izip_longest( funDef.args, node.arguments ):
+        for expected_arg, given_arg in izip_longest(funDef.args, node.arguments):
             if expected_arg is None:
-                self.errors.append( ErrorMsg( "Provided too many parameters to function {0}".format( funName ), node.line ) )
+                self.errors.append(ErrorMsg("Provided too many parameters to function {0}".format(funName), node.line))
                 return None
 
             if given_arg is None:
-                self.errors.append( ErrorMsg( "Provided not enough parameters to function {0}".format( funName ), node.line ) )
+                self.errors.append(
+                    ErrorMsg("Provided not enough parameters to function {0}".format(funName), node.line))
                 return None
 
             expected_type = expected_arg.type.value
-            given_type = self.visit( given_arg )
+            given_type = self.visit(given_arg)
 
-
-            self.arg_reaction[ expected_type ][ given_type ]( node.id, expected_arg.id.value, expected_type, given_type, node.line )
+            self.arg_reaction[expected_type][given_type](node.id, expected_arg.id.value, expected_type, given_type,
+                                                         node.line)
 
         return self.visit(node.id)
 
@@ -105,16 +106,16 @@ class TypeChecker(NodeVisitor):
         while not isinstance(parentFunc, AST.FunDef):
             parentFunc = parentFunc.parent
             if parentFunc is None:
-                self.errors.append( ErrorMsg( "Return outside function body", node.line ) )
+                self.errors.append(ErrorMsg("Return outside function body", node.line))
                 return None
 
         got_type = self.visit(node.expression)
         expected_type = parentFunc.type.value
         if expected_type != got_type:
-            self.errors.append( ErrorMsg( "Invalid return type {0}. Expected {1}".format( got_type, expected_type ), node.line ) )
+            self.errors.append(
+                ErrorMsg("Invalid return type {0}. Expected {1}".format(got_type, expected_type), node.line))
 
     def visit_ID(self, node):
-        print node.scope
         keys = node.scope.keys()
         originKeys = filter(lambda key: key == node, keys)
 

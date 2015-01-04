@@ -2,8 +2,8 @@
 
 import AST
 
-class NodeVisitor(object):
 
+class NodeVisitor(object):
     def __init__(self):
         self.errors = []
         self.warnings = []
@@ -18,7 +18,7 @@ class NodeVisitor(object):
         return visitor(node)
 
 
-    def generic_visit(self, node):        # Called if no explicit visitor function exists for a node.
+    def generic_visit(self, node):  # Called if no explicit visitor function exists for a node.
         if isinstance(node, list):
             for elem in node:
                 self.visit(elem)
@@ -31,7 +31,7 @@ class NodeVisitor(object):
                 elif isinstance(child, AST.Node):
                     self.visit(child)
 
-    # simpler version of generic_visit, not so general
-    #def generic_visit(self, node):
-    #    for child in node.children:
-    #        self.visit(child)
+                    # simpler version of generic_visit, not so general
+                    # def generic_visit(self, node):
+                    #    for child in node.children:
+                    #        self.visit(child)

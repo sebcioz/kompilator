@@ -1,6 +1,7 @@
 import utils
 from scope import SymbolScope
 
+
 class Node(object):
     def __init__(self):
         self.scope = None
@@ -17,7 +18,7 @@ class Node(object):
     def set_scope(self, scope):
         self.scope = scope
         for child in self.children:
-            child.set_scope( scope )
+            child.set_scope(scope)
 
     def accept(self, visitor):
         return visitor.visit(self)
@@ -45,6 +46,7 @@ class Float(Const):
     def __init__(self, value):
         super(Float, self).__init__(float(value))
 
+
 class Program(Node):
     def __init__(self, declarations, funDefs, instructions):
         super(Program, self).__init__()
@@ -54,11 +56,12 @@ class Program(Node):
 
         self.children = [declarations] + funDefs + [instructions]
 
-    def set_scope(self, scope = None):
+    def set_scope(self, scope=None):
         self.scope = SymbolScope()
         self.scope.parent = scope
         for child in self.children:
-            child.set_scope( self.scope )
+            child.set_scope(self.scope)
+
 
 class Declarations(Node):
     def __init__(self, typedDeclarations):
@@ -76,8 +79,8 @@ class Declarations(Node):
                 grouped[declaration.type.value] = TypedDeclarations(declaration.type, [])
             grouped[declaration.type.value].declarations.extend(declaration.declarations)
 
-
         return Declarations(grouped.values())
+
 
 class TypedDeclarations(Node):
     def __init__(self, type, declarations):
@@ -97,6 +100,7 @@ class Declaration(Node):
 
         self.children = [id, value]
 
+
 class FunDef(Node):
     def __init__(self, type, id, args, compoundInstructions):
         super(FunDef, self).__init__()
@@ -113,7 +117,8 @@ class FunDef(Node):
         self.scope.parent = scope
 
         for child in self.children:
-            child.set_scope( scope, preset_scope = self.scope )
+            child.set_scope(scope, preset_scope=self.scope)
+
 
 class Arg(Node):
     def __init__(self, type, id):
@@ -123,12 +128,13 @@ class Arg(Node):
         self.id.type = type
 
 
-
 class String(Const):
     pass
 
+
 class Type(Const):
     pass
+
 
 class ID(Const):
     def __eq__(self, other):
@@ -139,6 +145,7 @@ class ID(Const):
     def __hash__(self):
         return self.value.__hash__()
 
+
 class CompoundInstructions(Node):
     def __init__(self, declarations, instructions):
         super(CompoundInstructions, self).__init__()
@@ -146,7 +153,7 @@ class CompoundInstructions(Node):
         self.instructions = instructions
         self.children = [declarations, instructions]
 
-    def set_scope(self, scope, preset_scope = None):
+    def set_scope(self, scope, preset_scope=None):
         if preset_scope is None:
             self.scope = SymbolScope()
         else:
@@ -154,7 +161,8 @@ class CompoundInstructions(Node):
 
         self.scope.parent = scope
         for child in self.children:
-            child.set_scope( self.scope )
+            child.set_scope(self.scope)
+
 
 class Instructions(Node):
     def __init__(self, instructions):
@@ -162,14 +170,17 @@ class Instructions(Node):
         self.instructions = instructions
         self.children = instructions
 
+
 class Instruction(Node):
     pass
+
 
 class PrintInstruction(Instruction):
     def __init__(self, expression):
         super(PrintInstruction, self).__init__()
         self.expression = expression
         self.children = [expression]
+
 
 class WhileInstruction(Instruction):
     def __init__(self, condition, instruction):
@@ -178,12 +189,14 @@ class WhileInstruction(Instruction):
         self.instruction = instruction
         self.children = [condition, instruction]
 
+
 class LabeledInstruction(Instruction):
     def __init__(self, id, instruction):
         super(LabeledInstruction, self).__init__()
         self.id = id
         self.instruction = instruction
         self.children = [instruction]
+
 
 class AssignmentInstruction(Instruction):
     def __init__(self, id, expression):
@@ -192,6 +205,7 @@ class AssignmentInstruction(Instruction):
         self.expression = expression
 
         self.children = [expression, id]
+
 
 class ChoiceInstruction(Instruction):
     def __init__(self, condition, instruction):
@@ -211,6 +225,7 @@ class ChoiceElseInstruction(Instruction):
 
         self.children = [condition, instruction, elseInstruction]
 
+
 class RepeatInstruction(Instruction):
     def __init__(self, instructions, condition):
         super(RepeatInstruction, self).__init__()
@@ -218,6 +233,7 @@ class RepeatInstruction(Instruction):
         self.condition = condition
 
         self.children = [instructions] + [condition]
+
 
 class Operator(Node):
     def __init__(self, leftOperand, rightOperand):
@@ -230,25 +246,31 @@ class Operator(Node):
     def sign(self):
         pass
 
+
 class SumOperator(Operator):
     def sign(self):
         return "+"
+
 
 class MultiplyOperator(Operator):
     def sign(self):
         return "*"
 
+
 class DifferenceOperator(Operator):
     def sign(self):
         return "-"
+
 
 class DivOperator(Operator):
     def sign(self):
         return "/"
 
+
 class LogicalAndOperator(Operator):
     def sign(self):
         return "AND"
+
 
 class EqualOperator(Operator):
     def sign(self):
@@ -259,55 +281,68 @@ class ModuloOperator(Operator):
     def sign(self):
         return "%"
 
+
 class BitXorOperator(Operator):
     def sign(self):
         return "^"
+
 
 class BitAndOperator(Operator):
     def sign(self):
         return "&"
 
+
 class BitOrOperator(Operator):
     def sign(self):
         return "|"
+
 
 class ShiftLeftOperator(Operator):
     def sign(self):
         return "<<"
 
+
 class ShiftRightOperator(Operator):
     def sign(self):
         return ">>"
+
 
 class LogicalOrOperator(Operator):
     def sign(self):
         return "||"
 
+
 class NotEqualOperator(Operator):
     def sign(self):
         return "!="
+
 
 class GreaterThanOperator(Operator):
     def sign(self):
         return ">"
 
+
 class GreaterEqualOperator(Operator):
     def sign(self):
         return ">="
+
 
 class LowerThanOperator(Operator):
     def sign(self):
         return "<"
 
+
 class LowerEqualOperator(Operator):
     def sign(self):
         return "<="
+
 
 class GroupingOperator(Node):
     def __init__(self, operand):
         super(GroupingOperator, self).__init__()
         self.operand = operand
         self.children = [operand]
+
 
 class FunctionCallOperator(Node):
     def __init__(self, id, arguments):
@@ -316,14 +351,17 @@ class FunctionCallOperator(Node):
         self.arguments = arguments
         self.children = arguments + [id]
 
+
 class ReturnInstruction(Instruction):
     def __init__(self, expression):
         super(ReturnInstruction, self).__init__()
         self.expression = expression
         self.children = [expression]
 
+
 class ContinueInstruction(Instruction):
     pass
+
 
 class BreakInstruction(Instruction):
     pass

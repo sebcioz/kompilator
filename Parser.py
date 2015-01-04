@@ -6,10 +6,7 @@ import pprint
 import AST
 
 
-
 class Parser(object):
-
-
     def __init__(self):
         self.scanner = Scanner()
         self.scanner.build()
@@ -17,30 +14,33 @@ class Parser(object):
     tokens = Scanner.tokens
 
     precedence = (
-       ("nonassoc", 'IFX'),
-       ("nonassoc", 'ELSE'),
-       ("right", '='),
-       ("left", 'OR'),
-       ("left", 'AND'),
-       ("left", '|'),
-       ("left", '^'),
-       ("left", '&'),
-       ("nonassoc", '<', '>', 'EQ', 'NEQ', 'LE', 'GE'),
-       ("left", 'SHL', 'SHR'),
-       ("left", '+', '-'),
-       ("left", '*', '/', '%'),
+        ("nonassoc", 'IFX'),
+        ("nonassoc", 'ELSE'),
+        ("right", '='),
+        ("left", 'OR'),
+        ("left", 'AND'),
+        ("left", '|'),
+        ("left", '^'),
+        ("left", '&'),
+        ("nonassoc", '<', '>', 'EQ', 'NEQ', 'LE', 'GE'),
+        ("left", 'SHL', 'SHR'),
+        ("left", '+', '-'),
+        ("left", '*', '/', '%'),
     )
 
 
     def p_error(self, p):
         if p:
-            print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno, self.scanner.find_tok_column(p), p.type, p.value))
+            print("Syntax error at line {0}, column {1}: LexToken({2}, '{3}')".format(p.lineno,
+                                                                                      self.scanner.find_tok_column(p),
+                                                                                      p.type, p.value))
         else:
             print('At end of input')
-    
+
     def p_program(self, p):
         """program : declarations fundefs instructions"""
-        p[0] = AST.Program(AST.Declarations.mapTypedDeclarations(p[1]), utils.flatten(p[2]), AST.Instructions(utils.flatten(p[3])))
+        p[0] = AST.Program(AST.Declarations.mapTypedDeclarations(p[1]), utils.flatten(p[2]),
+                           AST.Instructions(utils.flatten(p[3])))
         p[0].set_parents()
         p[0].set_scope()
         p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
@@ -69,10 +69,9 @@ class Parser(object):
             p[0] = [p[1]]
 
 
-
     def p_init(self, p):
         """init : ID '=' expression """
-        p[0] =  AST.Declaration(p[1], p[3])
+        p[0] = AST.Declaration(p[1], p[3])
         p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
 
@@ -121,13 +120,11 @@ class Parser(object):
                         | IF '(' condition ')' instruction ELSE instruction
                         | IF '(' error ')' instruction %prec IFX
                         | IF '(' error ')' instruction ELSE instruction """
-        if len(p) >  6:
+        if len(p) > 6:
             p[0] = AST.ChoiceElseInstruction(p[3], p[5], p[7])
         else:
             p[0] = AST.ChoiceInstruction(p[3], p[5])
         p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
-
-
 
 
     def p_while_instr(self, p):
@@ -160,7 +157,8 @@ class Parser(object):
 
     def p_compound_instr(self, p):
         """compound_instr : '{' declarations instructions '}' """
-        p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]), AST.Instructions(utils.flatten(p[3])))
+        p[0] = AST.CompoundInstructions(AST.Declarations.mapTypedDeclarations(p[2]),
+                                        AST.Instructions(utils.flatten(p[3])))
         p[0].set_position(p.lexer.lexer.lineno, p.lexer.lexer.lexpos)
 
     def p_condition(self, p):
@@ -236,7 +234,6 @@ class Parser(object):
         if p[2] == ">>":
             p[0] = AST.ShiftRightOperator(p[1], p[3])
 
-
         if p[2] == "||":
             p[0] = AST.LogicalOrOperator(p[1], p[3])
         if p[2] == "&&":
@@ -262,7 +259,7 @@ class Parser(object):
     def p_expr_list_or_empty(self, p):
         """expr_list_or_empty : expr_list
                               | """
-        if len(p)>1:
+        if len(p) > 1:
             p[0] = utils.flatten(p[1])
         else:
             p[0] = []
@@ -271,7 +268,7 @@ class Parser(object):
     def p_expr_list(self, p):
         """expr_list : expr_list ',' expression
                      | expression """
-        if len(p)>2:
+        if len(p) > 2:
             p[0] = [p[1], p[3]]
         else:
             p[0] = [p[1]]

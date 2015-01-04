@@ -3,9 +3,9 @@
 class MultipleDeclarationError(Exception):
     pass
 
+
 class TreeScope(object):
-    
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         self.parent = parent
         self.dict = {}
 
@@ -25,11 +25,11 @@ class TreeScope(object):
         self.dict[key] = value
 
     def __str__(self):
-        return str(self.dict)    
+        return str(self.dict)
+
 
 class SymbolScope(TreeScope):
-
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         self.parent = parent
         self.dict = {}
 
@@ -47,7 +47,7 @@ class SymbolScope(TreeScope):
 
     def __setitem__(self, key, value):
         if key in self.dict:
-            raise MultipleDeclarationError( "{0} already declared in this scope".format(key) )
+            raise MultipleDeclarationError("{0} already declared in this scope".format(key))
         self.dict[key] = value
 
     def __str__(self):
@@ -55,12 +55,12 @@ class SymbolScope(TreeScope):
 
     def keys(self):
         keys = self.dict.keys()
-        if(self.parent is not None):
+        if (self.parent is not None):
             keys.extend(self.parent.keys())
         return keys
 
-class ValueScope(TreeScope):
 
+class ValueScope(TreeScope):
     def __setitem__(self, key, value):
         self.dict[key] = value
 

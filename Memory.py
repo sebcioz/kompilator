@@ -1,8 +1,6 @@
-
-
 # class Memory:
 
-#     def __init__(self, name):
+# def __init__(self, name):
 #         self.dict = {}
 #         self.name = name
 
@@ -17,9 +15,8 @@
 
 
 class MemoryStack:
-                                                                             
     def __init__(self, memory=None):
-        self.stack = [ memory ] if ( memory is not None ) else []
+        self.stack = [memory] if ( memory is not None ) else []
 
     # def get(self, name):
     #     self.stack
@@ -33,7 +30,7 @@ class MemoryStack:
     #             return memory.put( name, value )
 
     def push(self, memory):
-        self.stack.append( memory )
+        self.stack.append(memory)
 
     def pop(self):
         return self.stack.pop()
