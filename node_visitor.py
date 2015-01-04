@@ -10,7 +10,11 @@ class NodeVisitor(object):
 
     def visit(self, node):
         method = 'visit_' + node.__class__.__name__
-        visitor = getattr(self, method, self.generic_visit)
+        parent_method = 'visit_' + node.__class__.__bases__[0].__name__
+
+        visitor = getattr(self, method, None)
+        if visitor is None:
+            visitor = getattr(self, parent_method, self.generic_visit)
         return visitor(node)
 
 

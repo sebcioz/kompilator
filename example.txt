@@ -1,44 +1,10 @@
-int K = 10;
+float L = 2.1;
+string S = "kudsf";
 
-int hello(int a, string b){
-    int X=20;
-    float K=234324.2323;
-    print "Próba";
-}
-int hello(int a){
-    return a * 10;
-}
-int SUPER_TEST(){
-    print K;
+string hello(int i){
+    return 10;
 }
 
-print "Test";
+S = hello("sdf");
 
-while(23) print "Test 123";
-
-labelka: print "Jestem nazwna";
-
-X = 212;
-
-if (K == 10 && 5==7){
-    while (10){
-        print 2 + 3 * 100 / 2 + 1;
-        K = 100;
-        break;
-    }
-}
-
-while(1){
-    print 1;
-    K = hello(2+2, "Sasas", (2*2)+2 == 2);
-    if( X >= 10){
-        continue;
-    }
-}
-
-
-if( ( X>0) && (2<<10) || (2 ^ 1) & 4 & 5 != 5){
-    K = 10;
-    X = hello(K);
-    print X;
-}
+return 10;

@@ -29,3 +29,5 @@ class SymbolScope(object):
     def __str__(self):
         return str(self.dict)
 
+    def keys(self):
+        return self.dict.keys()

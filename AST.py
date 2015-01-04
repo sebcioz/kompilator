@@ -85,6 +85,9 @@ class TypedDeclarations(Node):
         self.type = type
         self.declarations = declarations
         self.children = declarations
+        for declaration in self.declarations:
+            declaration.id.type = self.type
+
 
 class Declaration(Node):
     def __init__(self, id, value):
@@ -92,13 +95,14 @@ class Declaration(Node):
         self.id = id
         self.value = value
 
-        self.children = [value]
+        self.children = [id, value]
 
 class FunDef(Node):
     def __init__(self, type, id, args, compoundInstructions):
         super(FunDef, self).__init__()
         self.type = type
         self.id = id
+        self.id.type = type
         self.args = args
         self.compoundInstructions = compoundInstructions
 
@@ -107,6 +111,7 @@ class FunDef(Node):
     def set_scope(self, scope):
         self.scope = SymbolScope()
         self.scope.parent = scope
+
         for child in self.children:
             child.set_scope( scope, preset_scope = self.scope )
 
@@ -125,8 +130,13 @@ class Type(Const):
     pass
 
 class ID(Const):
-    pass
+    def __eq__(self, other):
+        if type(other) is str:
+            return False
+        return self.value == other.value
 
+    def __hash__(self):
+        return self.value.__hash__()
 
 class CompoundInstructions(Node):
     def __init__(self, declarations, instructions):
@@ -180,7 +190,7 @@ class AssignmentInstruction(Instruction):
         self.id = id
         self.expression = expression
 
-        self.children = [expression]
+        self.children = [expression, id]
 
 class ChoiceInstruction(Instruction):
     def __init__(self, condition, instruction):
@@ -303,7 +313,7 @@ class FunctionCallOperator(Node):
         super(FunctionCallOperator, self).__init__()
         self.id = id
         self.arguments = arguments
-        self.children = arguments
+        self.children = arguments + [id]
 
 class ReturnInstruction(Instruction):
     def __init__(self, expression):

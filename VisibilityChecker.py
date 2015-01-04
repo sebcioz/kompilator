@@ -9,24 +9,23 @@ class VisibilityChecker(NodeVisitor):
     def __init__(self):
         NodeVisitor.__init__(self)
 
-
     def visit_Declaration(self, node):
         try:
-            node.scope[node.id.value] = node.value
+            node.scope[node.id] = node.value
             self.visit(node.value)
         except scope.MultipleDeclarationError:
             self.errors.append( ErrorMsg( "Multiple declaration of {0}".format( node.id.value ), node.line, node.column ) )
 
     def visit_ID(self, node):
         try:
-            return node.scope[ node.value ]
+            return node.scope[ node ]
         except KeyError:
             self.errors.append( ErrorMsg( "{0} not declared in this scope".format( node.value ), node.parent.line, node.parent.column ) )
 
 
     def visit_FunDef(self, node):
         try:
-            node.parent.scope[ node.id.value ] = node
+            node.parent.scope[ node.id ] = node
         except scope.MultipleDeclarationError:
             self.errors.append( ErrorMsg( "Multiple declaration of {0}".format( node.id.value ), node.line, node.column ) )
 
@@ -42,7 +41,7 @@ class VisibilityChecker(NodeVisitor):
     def visit_FunctionCallOperator(self, node):
 
         try:
-            return node.scope[ node.id.value ]
+            node.scope[ node.id ]
         except KeyError:
             self.errors.append( ErrorMsg( "{0} not declared in this scope".format( node.id.value ), node.line, node.column ) )
 
@@ -51,8 +50,7 @@ class VisibilityChecker(NodeVisitor):
 
     def visit_AssignmentInstruction(self, node):
         try:
-            return node.scope[node.id.value]
+            node.scope[node.id]
         except KeyError:
             self.errors.append( ErrorMsg( "{0} not declared in this scope".format( node.id.value ), node.line, node.column ) )
-
         self.visit(node.expression)
