@@ -120,17 +120,21 @@ class Interpreter(object):
         for arg_expr, arg_name in zip(node.arguments, ( arg.id for arg in fundef.args )):
             args_dict[arg_name] = arg_expr.accept(self)
 
-        self.stack.push(self.curScope)
-        self.curScope = ValueScope(self.globalScope)
+        parentScope = self.curScope
+        self.stack.push(parentScope)
+        self.curScope = ValueScope()
+
         for key in args_dict:
             self.curScope[key] = args_dict[key]
 
         try:
-            fundef.compoundInstructions.accept(self)
+            fundef.compoundInstructions.declarations.accept(self)
+            self.curScope.parent = parentScope
+            fundef.compoundInstructions.instructions.accept(self)
         except ReturnValueException as e:
-            self.curScope = self.stack.pop()
             return e.value
-
+        finally:
+            self.curScope = self.stack.pop()
         # did not found return instruction
         # this situation should not take place if the lack of return instruction have been handled as an semantic error while parsing
 

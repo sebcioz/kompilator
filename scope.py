@@ -62,5 +62,7 @@ class SymbolScope(TreeScope):
 
 class ValueScope(TreeScope):
     def __setitem__(self, key, value):
-        self.dict[key] = value
-
+        if key in self.dict or self.parent is None:
+            self.dict[key] = value
+        else:
+            self.parent.dict[key] = value
