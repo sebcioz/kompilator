@@ -7,6 +7,7 @@ from TypeChecker import TypeChecker
 from Interpreter import Interpreter
 
 if __name__ == '__main__':
+    sys.setrecursionlimit(10000)
 
     try:
         filename = sys.argv[1] if len(sys.argv) > 1 else "example.txt"
@@ -21,11 +22,11 @@ if __name__ == '__main__':
 
     parsed = parser.parse(text, lexer=Parser.scanner)
 
-    tr.TreePrinter.printAST(parsed)
+    #tr.TreePrinter.printAST(parsed)
 
     if parsed is not None:
-        print "Compiling {}".format(filename)
-        print
+        #print "Compiling {}".format(filename)
+        #print
 
         ch = VisibilityChecker()
         ch.visit(parsed)
@@ -42,12 +43,12 @@ if __name__ == '__main__':
         for warning in warnings:
             print warning
 
-        print
-        print "Compilation {} ({} errors, {} warnings)".format(msg, len(errors), len(warnings))
+        #print
+        #print "Compilation {} ({} errors, {} warnings)".format(msg, len(errors), len(warnings))
 
         if len(errors) == 0:
-            print
-            print "Output below in stdout"
-            print  "-" * 32
+            #print
+            #print "Output below in stdout"
+            #print  "-" * 32
 
             parsed.accept(Interpreter())

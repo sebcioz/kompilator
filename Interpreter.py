@@ -142,8 +142,19 @@ class Interpreter(object):
 
     @when(AST.CompoundInstructions)
     def visit(self, node):
-        node.declarations.accept(self)
-        node.instructions.accept(self)
+        try:
+            parentScope = self.curScope
+            self.stack.push(parentScope)
+
+            self.curScope = ValueScope()
+            node.declarations.accept(self)
+
+            self.curScope.parent = parentScope
+            node.instructions.accept(self)
+        except Exception as e:
+            raise e
+        finally:
+            self.curScope = self.stack.pop()
 
 
     @when(AST.AssignmentInstruction)
@@ -184,7 +195,7 @@ class Interpreter(object):
             except BreakException:
                 break
             # termination condition
-            if node.condition.accept(self) == False:
+            if node.condition.accept(self):
                 break
 
     @when(AST.ContinueInstruction)

@@ -111,6 +111,7 @@ class TypeChecker(NodeVisitor):
 
         got_type = self.visit(node.expression)
         expected_type = parentFunc.type.value
+
         if expected_type != got_type:
             self.errors.append(
                 ErrorMsg("Invalid return type {0}. Expected {1}".format(got_type, expected_type), node.line))
@@ -123,6 +124,9 @@ class TypeChecker(NodeVisitor):
             return None
 
         return originKeys[0].type.value
+
+    def visit_GroupingOperator(self, node):
+        return self.visit(node.operand)
 
     def visit_Integer(self, node):
         return 'int'

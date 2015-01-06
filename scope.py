@@ -63,6 +63,8 @@ class SymbolScope(TreeScope):
 class ValueScope(TreeScope):
     def __setitem__(self, key, value):
         if key in self.dict or self.parent is None:
+            #print key, "->", value, "in local scope"
             self.dict[key] = value
         else:
+            #print key, "->", value, "in parent scope"
             self.parent.dict[key] = value
